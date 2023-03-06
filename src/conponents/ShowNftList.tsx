@@ -6,7 +6,7 @@ export default function ShowNftList() {
   const { myAddress, inputRef, handleSearch, ownerAddress, changeOwner, nftIds, imgURIs, handlePreviousPage, handleNextPage } = useNft()
 
   return (
-    <div className='max-w-screen-lg h-[800px] mx-auto pt-14 rounded-md flex flex-col justify-center' >
+    <div className='max-w-screen-lg h-[800px] mx-auto pt-14 flex flex-col justify-center' >
       <p className='text-center font-extrabold text-5xl'>CloneX NFT 리스트 출력</p>
       <p className='text-lg mt-2 mx-auto'>접속 계정: {myAddress}</p>
       <form className='m-1 mx-auto text-lg' onSubmit={handleSearch}>
