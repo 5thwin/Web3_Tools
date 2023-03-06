@@ -45,11 +45,11 @@ export default function useNft() {
 				console.log('Can not find the contract');
 				return;
 			}
-			const nftIds: number[] = await contract.methods
+			const newNftIds: number[] = await contract.methods
 				.tokensOfOwner(ownerAddress)
 				.call();
-			console.log(nftIds);
-			setNftIds(nftIds);
+			console.log(newNftIds);
+			setNftIds(newNftIds);
 		} catch (error) {
 			console.error(error);
 		}
@@ -63,7 +63,8 @@ export default function useNft() {
 			}
 			const newImgURIs: string[] = [];
 			const fromIndex = page * 4;
-			const toIndex = fromIndex + 3;
+			const toIndex =
+				nftIds.length - 1 < fromIndex + 3 ? nftIds.length - 1 : fromIndex + 3;
 			for (let i = fromIndex; i <= toIndex; i++) {
 				const nftId = nftIds[i];
 				const tokenURI = await contract.methods.tokenURI(nftId).call();
@@ -96,6 +97,16 @@ export default function useNft() {
 		e.preventDefault();
 		inputRef.current && setOwnerAddress(inputRef.current.value);
 	}, []);
+	const changeOwner = useCallback(
+		(address: string) => {
+			if (address !== ownerAddress) {
+				setImgURIs([]);
+				setCurrentPage(0);
+				setOwnerAddress(address);
+			}
+		},
+		[ownerAddress]
+	);
 
 	const getApprovedAddress = useCallback(
 		async (nftId: number) => {
@@ -147,5 +158,6 @@ export default function useNft() {
 		approveTransfer,
 		handleNextPage,
 		handlePreviousPage,
+		changeOwner,
 	};
 }

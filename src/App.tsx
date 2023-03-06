@@ -1,5 +1,5 @@
 import HeaderBar from './conponents/HeaderBar';
-import ShowNftList from './conponents/nft-list/ShowNftList';
+import ShowNftList from './conponents/ShowNftList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 export default function App() {
