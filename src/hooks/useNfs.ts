@@ -11,6 +11,7 @@ export default function useNft() {
 	const [nftIds, setNftIds] = useState<number[]>([]);
 	const [contract, setContract] = useState<Contract | undefined>(undefined);
 	const [imgURIs, setImgURIs] = useState<string[]>([]);
+	const [currentPage, setCurrentPage] = useState<number>(0);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,29 +41,40 @@ export default function useNft() {
 	const loadNfts = useCallback(async () => {
 		/** 이더리움 계정이 소유한 NFT 토큰 ID의 배열을 반환*/
 		try {
-			if (!contract) return;
+			if (!contract) {
+				console.log('Can not find the contract');
+				return;
+			}
 			const nftIds: number[] = await contract.methods
 				.tokensOfOwner(ownerAddress)
 				.call();
+			console.log(nftIds);
 			setNftIds(nftIds);
 		} catch (error) {
 			console.error(error);
 		}
 	}, [contract, ownerAddress]);
 
-	const loadImgURIs = useCallback(async () => {
-		if (!contract) return [];
-		const newImgURIs: string[] = [];
-
-		for (const nftId of nftIds) {
-			const tokenURI = await contract.methods.tokenURI(nftId).call();
-			const metadata = await axios.get(tokenURI);
-			const image = metadata.data.image;
-			newImgURIs.push(image);
-		}
-		console.log(nftIds);
-		setImgURIs(newImgURIs);
-	}, [contract, nftIds]);
+	const loadImgURIsByPage = useCallback(
+		async (page: number) => {
+			if (!contract) {
+				console.log('Can not find the contract');
+				return [];
+			}
+			const newImgURIs: string[] = [];
+			const fromIndex = page * 4;
+			const toIndex = fromIndex + 3;
+			for (let i = fromIndex; i <= toIndex; i++) {
+				const nftId = nftIds[i];
+				const tokenURI = await contract.methods.tokenURI(nftId).call();
+				const metadata = await axios.get(tokenURI);
+				const image = metadata.data.image;
+				newImgURIs.push(image);
+			}
+			setImgURIs(newImgURIs);
+		},
+		[contract, nftIds]
+	);
 
 	useEffect(() => {
 		loadContract();
@@ -76,9 +88,9 @@ export default function useNft() {
 
 	useEffect(() => {
 		if (nftIds.length > 0) {
-			loadImgURIs();
+			loadImgURIsByPage(currentPage);
 		}
-	}, [loadImgURIs, nftIds]);
+	}, [currentPage, loadImgURIsByPage, nftIds]);
 
 	const handleSearch = useCallback((e: React.FormEvent) => {
 		e.preventDefault();
@@ -112,7 +124,17 @@ export default function useNft() {
 		},
 		[contract, myAddress]
 	);
-
+	const handleNextPage = useCallback(() => {
+		const endPage = Math.floor(nftIds.length / 4);
+		if (currentPage < endPage) {
+			setCurrentPage((pre) => pre + 1);
+		}
+	}, [currentPage, nftIds]);
+	const handlePreviousPage = useCallback(() => {
+		if (currentPage > 0) {
+			setCurrentPage((pre) => pre - 1);
+		}
+	}, [currentPage]);
 	return {
 		myAddress,
 		inputRef,
@@ -123,5 +145,7 @@ export default function useNft() {
 		nftIds,
 		getApprovedAddress,
 		approveTransfer,
+		handleNextPage,
+		handlePreviousPage,
 	};
 }
