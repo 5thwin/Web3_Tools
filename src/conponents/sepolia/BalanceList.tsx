@@ -12,7 +12,6 @@ export default function BalanceList({ account }: BalanceListProps) {
   const loadBalance = useCallback(async () => {
     const balance = await web3.eth.getBalance(account);
     const etherBalance = web3.utils.fromWei(balance, 'ether');
-    console.log(etherBalance);
     setBalance(etherBalance);
   }, [account, web3])
   useEffect(() => {

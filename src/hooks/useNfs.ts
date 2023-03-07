@@ -48,7 +48,6 @@ export default function useNft() {
 			const newNftIds: number[] = await contract.methods
 				.tokensOfOwner(ownerAddress)
 				.call();
-			console.log(newNftIds);
 			setNftIds(newNftIds);
 		} catch (error) {
 			console.error(error);

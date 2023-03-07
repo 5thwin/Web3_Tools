@@ -4,14 +4,13 @@ import {
 } from '../constants';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
-import axios from 'axios';
-import { Contract } from 'web3-eth-contract';
 import { useCallback, useEffect, useState } from 'react';
 import { web3Store } from '../store/web3Store';
+import { contractStore } from '../store/contractStore';
 
 export default function useSepolia() {
 	const { web3, setWeb3 } = web3Store();
-	const [contract, setContract] = useState<Contract | undefined>(undefined);
+	const { contract, setContract } = contractStore();
 	const [myAddress, setMyAddress] = useState('');
 
 	const loadContract = useCallback(async () => {
@@ -23,11 +22,11 @@ export default function useSepolia() {
 				await window.ethereum.request({ method: 'eth_requestAccounts' });
 				// 현재 계정 주소 가져오기
 				const accounts = await web3.eth.getAccounts();
-				setMyAddress(accounts[0]);
 				const newContract = new web3.eth.Contract(
 					CHAINLINK_CONTRACT_ABI as AbiItem[],
 					CHAINLINK_CONTRACT_ADDRESS
 				);
+				setMyAddress(accounts[0]);
 				setWeb3(web3);
 				setContract(newContract);
 			} catch (error) {
@@ -36,7 +35,7 @@ export default function useSepolia() {
 		} else {
 			console.error('Web3 is not available');
 		}
-	}, [setWeb3]);
+	}, [setContract, setWeb3]);
 
 	useEffect(() => {
 		loadContract();
