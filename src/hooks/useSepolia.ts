@@ -16,18 +16,18 @@ export default function useSepolia() {
 	const loadContract = useCallback(async () => {
 		// Check if web3 is available
 		if (typeof window.ethereum !== 'undefined') {
-			const web3 = new Web3(window.ethereum);
+			const newWeb3 = new Web3(window.ethereum);
 			try {
 				//  메타마스크 지갑과 연결된 계정 정보를 가져오기
 				await window.ethereum.request({ method: 'eth_requestAccounts' });
 				// 현재 계정 주소 가져오기
-				const accounts = await web3.eth.getAccounts();
-				const newContract = new web3.eth.Contract(
+				const accounts = await newWeb3.eth.getAccounts();
+				const newContract = new newWeb3.eth.Contract(
 					CHAINLINK_CONTRACT_ABI as AbiItem[],
 					CHAINLINK_CONTRACT_ADDRESS
 				);
 				setMyAddress(accounts[0]);
-				setWeb3(web3);
+				setWeb3(newWeb3);
 				setContract(newContract);
 			} catch (error) {
 				console.error(error);
