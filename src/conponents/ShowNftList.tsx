@@ -1,5 +1,5 @@
 import useNft from '../hooks/useNfs';
-import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
+import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs'
 import { Link } from 'react-router-dom';
 
 export default function ShowNftList() {
