@@ -18,7 +18,6 @@ export default function BalanceList({ account }: BalanceListProps) {
     loadBalance();
   }, [loadBalance])
   return <div>
-    <p>잔고: {balance}</p>
+    <p className='text-lg text-center font-bold mt-2'>잔고: {balance}</p>
   </div>
-
 }

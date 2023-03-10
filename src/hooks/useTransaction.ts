@@ -15,6 +15,7 @@ export default function useTransaction(account: string) {
 				console.log('Can not find the contract');
 				return;
 			}
+			/**변경  */
 			const newNftIds: number[] = await contract.methods
 				.tokensOfOwner(account)
 				.call();
